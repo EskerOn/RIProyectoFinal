@@ -1,3 +1,47 @@
+from html.parser import HTMLParser
+
+class Article():
+    def __init__(self, newspaper, number, text):
+        self.newspaper=newspaper
+        self.number=int(number.replace(" ", ""))
+        self.text=text
+    def printnew(self):
+        print(f"Periodico: {self.newspaper}")
+        print(f"Noticia #: {self.number}")
+        print(f"Cuerpo: {self.text}")
+    def tostr(self):
+        return f"Periodico: {self.newspaper} \nNoticia #: {self.number} \nCuerpo: {self.text} \n"
+
+newslist=[]
+tempnewspaper=""
+tempnumber=""
+tags=[]
+
+class MyHTMLParser(HTMLParser):
+
+    def handle_starttag(self, tag, attrs):
+        global tags
+        tags.append(tag)
+
+    def handle_endtag(self, tag):
+        #print("Encountered an end tag :", tag)
+        pass
+
+    def handle_data(self, data):
+        global tags, tempnewspaper,tempnumber, newslist
+        tempdata=data.replace(" ", "")
+        if tempdata=="":
+            pass
+        elif tags[len(tags)-1] == 'periodico':
+            tempnewspaper=data
+            print(f"peridod s{data}s ")
+        elif tags[len(tags)-1] == "noticia" or tags[len(tags)-1] == "noticias":
+            tempnumber=data
+            print("notic"+data)
+        else:
+            newslist.append(Article(tempnewspaper, tempnumber, data))
+        #print("Encountered some data  :", data)
+
 def sinStop(array):
     arr=[]
     for i in range(len(array)):
@@ -19,13 +63,10 @@ def removePunctuation (text):
             s = s.replace(c, "")
     return s
 
-def limpia(String):
-    text=String.split('$')[1]
+def limpia(text):
     text=text.lower()
     text=removePunctuation(text)
-    array=Convert(text)
-    array = array[:-1]
-    return array
+    return text
 
 def listToStr(arr):
     out=""
@@ -39,9 +80,43 @@ outNoStop = open("outNoStop.txt", 'w',  encoding='utf-8')
 
 
 file=open('ProyectoF.txt', 'r',  encoding='utf-8')
-lines = file.readlines()
-for line in lines:
-    cleaned=limpia(line)
-    outCleaned.write(" ".join(cleaned)+"\n")
-    nostop = sinStop(cleaned)
-    outNoStop.write(" ".join(nostop)+"\n")
+content = file.read()
+content=content.replace("\n", " ")
+newsraw = content.split('</cuerpo>')
+newsraw=newsraw[:len(newsraw)-1]
+newsObj=[]
+
+parser = MyHTMLParser()
+parser.feed(content)
+
+for new in newslist:
+    new.text=limpia(new.text)
+    outCleaned.write(new.tostr())
+    new.printnew()
+
+"""
+
+
+for new in newsraw:
+    newspaper=
+
+
+
+
+
+    x = re.findall('\<periodico\>.*\<\/periodico\>', new)
+    resp=x[0]
+    resp=resp.replace("<periodico>", " ")
+    newspaper=resp.replace("</periodico>", " ")
+    x = re.findall('\<noticia\>.*\<\/noticia\>', new)
+    resp=x[0]
+    resp=resp.replace("<noticia>", " ")
+    number=resp.replace("</noticia>", " ")
+    
+    print(resp)
+
+#print(news)
+#cleaned=limpia(line)
+#outCleaned.write(" ".join(cleaned)+"\n")
+#nostop = sinStop(cleaned)
+#outNoStop.write(" ".join(nostop)+"\n")"""
