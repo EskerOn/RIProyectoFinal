@@ -16,4 +16,4 @@ Dado un conjunto de noticias se debe realizar los siguientes pasos:
 * Romero Velázquez Abdiel Vladimir        201744271
 * Suárez Carbajal Kevin Germán            201731350
 
-Para ejecutar el programa es necesario instalar la librería stanza, pandas y scikit-learn.
+Para ejecutar el programa es necesario instalar las librerías stanza, pandas y scikit-learn.
